@@ -1,0 +1,98 @@
+# ======================================================================================================================
+#  Dishonored (dishonored-nx) - your settings
+# ======================================================================================================================
+#
+#  This file is written next to dishonored.nro the first time the game starts without one. The build's own settings
+#  are compiled into the NRO; anything you set here overrides them.
+#
+#  To change a setting: remove the "#" at the start of its line and edit the value.
+#  To go back to the default: put the "#" back (or delete this file: a fresh one is written at the next start).
+#  Changes take effect the next time you start the game.
+#
+#  Recommended: CPU overclock (e.g. 1785 MHz with sys-clk). At stock clocks the game runs, but busy fights can make
+#  the frame rate drop and the sound crackle.
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+#  Graphics
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Upscaling to the screen. true: edge-adaptive upscale with sharpening (FSR-style, ~1-2 ms of GPU a frame).
+# false: plain bilinear upscale (softer picture).
+#dishonored_fsr = true
+
+# Sharpening of the FSR-style upscale, from 0.0 (none) to 2.0 (strong).
+#dishonored_fsr_sharpness = 0.3
+
+# Internal render height, handheld and docked. Supported values: 480, 720, 1080, 1440, 2160 (anything else is
+# ignored). 480 is the tested one; higher values cost a lot of GPU time and memory.
+#dishonored_render_height_handheld = 480
+#dishonored_render_height_docked = 480
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+#  Performance
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Handheld: ask the system for its official 460.8 MHz GPU profile (the one commercial games use; the memory clock is
+# left alone). Nothing changes when docked. false: the GPU stays at the stock 307.2 MHz.
+#dishonored_gpu_boost = true
+
+# The busiest game thread gets a CPU core of its own. 0: off, 1: one thread (recommended).
+# 2 starves the sound: do not use it.
+#hot_thread_cores = 1
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+#  Sound
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Sound buffered ahead of the speaker, in game audio frames of 5.3 ms (20 = 107 ms). Higher: fewer crackles when the
+# CPU is busy, a little more delay. Lower: less delay, more crackles at stock clocks.
+#audio_switch_frames_in_queue = 20
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+#  Controls
+# ----------------------------------------------------------------------------------------------------------------------
+
+# Face buttons. true: by position, as on the Xbox 360 pad (the bottom button, B, acts as A).
+# false: by letter (the Switch's A button acts as A).
+#input_xbox_layout = true
+
+# Single Joy-Cons are held sideways (their face buttons and stick turned to match). false: held upright.
+#input_joycon_sideways = true
+
+# Button remapping, per player: which Switch buttons press each Xbox 360 button. Empty = the default.
+# Values: a comma-separated list of A B X Y L R ZL ZR PLUS MINUS LSTICK RSTICK UP DOWN LEFT RIGHT SL SR, or NONE.
+# Example: jump (Xbox A) on both B and ZR:   a = "B, ZR"
+# Keys: a b x y lb rb lt rt start back ls rs up down left right
+# To use it, remove the "#" in front of [input_p1] and in front of each line you change.
+#[input_p1]
+#a = ""
+#b = ""
+#x = ""
+#y = ""
+#lb = ""
+#rb = ""
+#lt = ""
+#rt = ""
+#start = ""
+#back = ""
+#ls = ""
+#rs = ""
+#up = ""
+#down = ""
+#left = ""
+#right = ""
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+#  Log (for bug reports)
+# ----------------------------------------------------------------------------------------------------------------------
+
+# How much goes into the log: "error", "warning" (default), "info" (detailed, for bug reports), "debug".
+#log_level = "warning"
+
+# Write the log to logs/ next to dishonored.nro. false: no log file.
+#log_to_file = true

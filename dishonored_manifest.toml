@@ -1,0 +1,20 @@
+# ReXGlue recompilation manifest for Dishonored (Xbox 360, Europe disc, title 425307E3, default.xex).
+#
+# default.xex: image base 0x82000000, entry point 0x82CF15E0, image size 0x01500000, XEX version 9.
+# Encrypted + LZX compressed (retail disc). Imports only xboxkrnl.exe and xam.xex; no extra guest modules.
+# Nothing from the game is part of this project: assets/game_root is your own extracted disc.
+#
+# The build runs the generator by itself (target dishonored_codegen) and re-runs it when an input changes.
+
+[project]
+name = "dishonored"
+sdk_version = "0.10.0"
+game_root = "assets/game_root"
+
+[entrypoint]
+file_path = "assets/game_root/default.xex"
+out_directory_path = "generated/default"
+
+# overrides.toml: code the automatic analysis misses (7 tail-call targets, 185 pointer-only functions,
+# setjmp/longjmp), each entry with its evidence.
+includes = ["overrides.toml"]

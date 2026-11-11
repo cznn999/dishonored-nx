@@ -1,0 +1,69 @@
+diff --git a/sdk/src/graphics/command_processor.cpp b/sdk/src/graphics/command_processor.cpp
+index 4870c8d..e401f0c 100644
+--- a/sdk/src/graphics/command_processor.cpp
++++ b/sdk/src/graphics/command_processor.cpp
+@@ -1325,18 +1325,22 @@ bool CommandProcessor::ExecutePacketType3_EVENT_WRITE_ZPD(memory::RingBuffer* re
+     if (!pSampleCounts) {
+       return true;
+     }
+-    // 0xFFFFFEED is written to this two locations by D3D only on D3DISSUE_END
+-    // and used to detect a finished query.
+-    bool is_end_via_z_pass =
+-        pSampleCounts->ZPass_A == kQueryFinished || pSampleCounts->ZPass_B == kQueryFinished;
+-    // Older versions of D3D also checks for ZFail (4D5307D5).
+-    bool is_end_via_z_fail =
+-        pSampleCounts->ZFail_A == kQueryFinished || pSampleCounts->ZFail_B == kQueryFinished;
++    (void)kQueryFinished;
++    // D3D computes a query's result as the end report minus the begin report, and some D3D
++    // versions put the 0xFFFFFEED sentinel into the begin report as well, so telling begin from
++    // end by the sentinel can give both reports the same value: result 0, everything "occluded"
++    // except what the engine draws without a query (objects next to the camera). Write a
++    // free-running counter instead, like the hardware: every report is a snapshot that grew by
++    // the fake count since the previous one, so end - begin is always positive.
++    static uint64_t fake_zpd_counter = 0;
++    fake_zpd_counter += uint64_t(fake_sample_count ? fake_sample_count : 1);
++    uint32_t lane_a = uint32_t(fake_zpd_counter) - (uint32_t(fake_zpd_counter) >> 1);
++    uint32_t lane_b = uint32_t(fake_zpd_counter) >> 1;
+     std::memset(pSampleCounts, 0, sizeof(xe_gpu_depth_sample_counts));
+-    if (is_end_via_z_pass || is_end_via_z_fail) {
+-      pSampleCounts->ZPass_A = fake_sample_count;
+-      pSampleCounts->Total_A = fake_sample_count;
+-    }
++    pSampleCounts->Total_A = lane_a;
++    pSampleCounts->Total_B = lane_b;
++    pSampleCounts->ZPass_A = lane_a;
++    pSampleCounts->ZPass_B = lane_b;
+   }
+ 
+   return true;
+diff --git a/sdk/src/graphics/register_file.cpp b/sdk/src/graphics/register_file.cpp
+index 03ce18c..31ff857 100644
+--- a/sdk/src/graphics/register_file.cpp
++++ b/sdk/src/graphics/register_file.cpp
+@@ -18,6 +18,26 @@ namespace rex::graphics {
+ 
+ RegisterFile::RegisterFile() {
+   std::memset(values, 0, sizeof(values));
++
++  // Xenos power-up values of registers a title may read before it writes them (as in current
++  // Xenia Canary). With 0 there, VGT_MAX_VTX_INDX clamps every vertex index to 0 and
++  // VGT_MULTI_PRIM_IB_RESET_INDX makes index 0 a strip restart: geometry collapses or vanishes.
++  values[XE_GPU_REG_VGT_MAX_VTX_INDX] = 0x0000FFFF;
++  values[XE_GPU_REG_VGT_MULTI_PRIM_IB_RESET_INDX] = 0x0000FFFF;
++  values[XE_GPU_REG_PA_SC_SCREEN_SCISSOR_BR] = 0x20002000;  // 8192 x 8192
++  values[XE_GPU_REG_RB_STENCILREFMASK_BF] = 0x00FFFF00;
++  values[XE_GPU_REG_PA_SU_POINT_SIZE] = 0x00080008;
++  values[XE_GPU_REG_PA_SU_POINT_MINMAX] = 0x04000010;
++  values[XE_GPU_REG_PA_SU_LINE_CNTL] = 0x00000008;
++  values[XE_GPU_REG_PA_SC_LINE_CNTL] = 0x00000400;
++  values[XE_GPU_REG_VGT_HOS_REUSE_DEPTH] = 0x0000000E;
++  values[XE_GPU_REG_VGT_VERTEX_REUSE_BLOCK_CNTL] = 0x0000000E;
++  values[XE_GPU_REG_VGT_OUT_DEALLOC_CNTL] = 0x00000010;
++  values[XE_GPU_REG_PA_CL_GB_VERT_CLIP_ADJ] = 0x40000000;  // 2.0f
++  values[XE_GPU_REG_PA_CL_GB_VERT_DISC_ADJ] = 0x3F800000;  // 1.0f
++  values[XE_GPU_REG_PA_CL_GB_HORZ_CLIP_ADJ] = 0x40000000;  // 2.0f
++  values[XE_GPU_REG_PA_CL_GB_HORZ_DISC_ADJ] = 0x3F800000;  // 1.0f
++  values[XE_GPU_REG_PA_SC_AA_MASK] = 0x0000FFFF;
+ }
+ 
+ const RegisterInfo* RegisterFile::GetRegisterInfo(uint32_t index) {

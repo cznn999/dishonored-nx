@@ -1,0 +1,31 @@
+# Dishonored - settings read at startup (ReXGlue cvars).
+# The build copies this file next to dishonored.exe when there is none there yet; edit that copy.
+# Any setting can also be given on the command line (--name=value).
+
+# GPU: stage 1 draws with ReXGlue's emulated Xenos GPU (D3D12 on Windows). Without this the window stays black.
+gpu_plugin = "xenos"
+
+log_level = "info"
+
+# EDRAM emulation path. Empty = automatic, which picks ROV on Intel GPUs (old driver workaround) and RTV elsewhere.
+# On an Intel Arc B580 the ROV path hung the GPU on entering the main menu (DEVICE_HUNG / TDR), so force RTV.
+# If clears look wrong (stale smears, black boxes), try "rov" and raise the Windows TDR delay instead.
+render_target_path_d3d12 = "rtv"
+
+# Vulkan (GPU_BACKEND=vulkan): "fsi" = the accurate path (fragment shader interlock). On the Intel Arc B580
+# the default host-framebuffer path shows a black picture; fsi draws the models.
+render_target_path_vulkan = "fsi"
+
+# Occlusion queries answered by the SDK's fake counter (patches/sdk-gpu-fixes.patch makes it a free-running
+# counter). With the host path, Dishonored hid everything farther than ~1 m from the camera.
+occlusion_query_enable = false
+
+# Stage 2 (native renderer). Step 1: collect the game's shaders (written to shaders/ next to dishonored.exe while you
+# play). Step 2, once the shader package dishonored is built from them: dishonored_renderer_native = true.
+dishonored_dump_shaders = true
+dishonored_renderer_native = false
+
+# Stage 2, Renut's Direct3D-level renderer (src/renut_engine; the path to deko3d on the Switch): "renut" draws the
+# game's Direct3D calls natively through plume (Vulkan / D3D12), with no PM4 ring, no EDRAM and no emulated GPU.
+# "xenos" (default) keeps the emulated GPU above as the reference.
+dishonored_renderer = "xenos"

@@ -1,0 +1,72 @@
+# Dishonored on the Switch: the build's fixed settings, compiled into the NRO (CMakeLists.txt, DISHONORED_BUILTIN_CONFIG).
+# dishonored.toml beside the NRO is read after these and may override any key.
+
+# Renut's Direct3D-level renderer on deko3d (the build links no Vulkan driver, so it is the only renderer).
+dishonored_renderer = "renut"
+renut_gpu_backend = "deko3d"
+
+# The game files as a loose game_root/ folder beside the NRO. An asset pack (game_root.nxpack) is one file, and
+# Dishonored's files are over the 4 GB a file can have on a FAT32 SD card.
+asset_pack = false
+asset_pack_build = false
+
+# The log beside the NRO (logs/). Release level: warnings and errors only (dishonored.toml: log_level = "info" for a
+# detailed log in a bug report; the 10 s reports are written at "info").
+log_level = "warning"
+log_to_file = true
+
+# As on the PC tests (dishonored.toml): the same clear done again is not skipped.
+dishonored_renut_clear_repeat = false
+
+# The core layout of the renderer's origin (game thread alone on core 0) is not for Unreal Engine 3's game, rendering and streaming
+# threads: every guest thread on any core.
+dishonored_renut_core_layout = false
+
+# dishonored-nx (2026-10-30, the grey prison): a colour clear reaches only the targets it was made on. The game clears
+# its 8-bit target over the scene's EDRAM after resolving the scene and copies the scene back; through the alias the
+# walls came out flat grey.
+dishonored_diag_no_alias_clear = true
+
+# dishonored-nx (2026-10-31): the occlusion queries get the GPU's real sample counts (walls hide what is behind them:
+# fewer draws). false: every query passes, as before.
+dishonored_renut_occlusion_queries = true
+# dishonored-nx (2026-10-31, the crash in a fight): deko3d now has a memory budget (the heap); with less than this left,
+# textures not bound for 120 frames are released.
+banjo_renut_textures_reserve_mb = 384
+
+# dishonored-nx (2026-11-11, pure-nx's pure_switch_defaults.toml): a contended critical section without a spin count
+# tries 256 times (a CPU yield between tries) before the full host waiter (object lookup, host condition variable, a
+# context switch each way), while the owner runs on another core. Pure: 4-11 % of its main thread's update was the
+# game's RtlEnterCriticalSection.
+kernel_critsec_spin = 256
+
+# dishonored-nx (2026-11-11): the XMA decoder thread stays where the scheduler puts it. Kept off core 0 (cores 0x2 with
+# hot_thread_cores) it shared core 1 with Renut's render thread, pinned there at a higher priority: the sound broke up
+# whenever the render thread was busy (stock clocks, the city). true: off core 0 again.
+audio_xma_off_core0 = false
+
+# dishonored-nx (2026-11-11): 20 game audio frames queued before audout (107 ms) instead of 10 (53 ms): with the three
+# game cores full in fights, Wwise's mixer sometimes renders a few tens of ms late, and the output asked for data it
+# did not have (rex_profile.log: up to 363 requests without data in 10 s). More latency, no gaps.
+audio_switch_frames_in_queue = 20
+
+# dishonored-nx (2026-11-11, release): the settings of the tested runs (out/dishonored.toml), here so that a fresh
+# dishonored.toml (dishonored_switch.toml, all comments) plays as they did.
+# Render height 480 in both modes (supported: 480, 720, 1080, 1440, 2160; 720 and up are untested and heavy).
+dishonored_render_height_handheld = 480
+dishonored_render_height_docked = 480
+# The busiest guest thread alone on core 0 (2: the sound broke up), no guest thread on the system core (Wwise's mixer
+# there: distorted sound), and the four-core mode: the Audio Worker on the system core (3).
+hot_thread_cores = 1
+system_core_threads = ""
+banjo_system_core = 1
+# Renut's pipeline prebuild worker on core 1, the uam compile thread not on the system core.
+banjo_background_compile_core = 1
+dishonored_uam_system_core = false
+# A frame later than the game's presentation interval goes at once instead of waiting for the next 60 Hz refresh
+# (dishonored_pacing_relaxed); dishonored_io_ranges_min_kb as in the tested runs.
+dishonored_pacing_relaxed = true
+dishonored_io_ranges_min_kb = 0
+# A mip level the game streams in after the first upload is uploaded again (off: objects dark at a distance).
+dishonored_renut_zero_level_recheck = true
+

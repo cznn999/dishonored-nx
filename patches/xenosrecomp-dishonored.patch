@@ -1,0 +1,44 @@
+--- a/app/thirdparty/reblue-XenosRecomp/XenosRecomp/shader_common.h
++++ b/app/thirdparty/reblue-XenosRecomp/XenosRecomp/shader_common.h
+@@ -51,7 +51,10 @@
+     X(TexCoord,  7, 19) \
+     X(TexCoord,  8, 20) \
+     X(TexCoord,  9, 21) \
+-    X(TexCoord, 10, 22)
++    X(TexCoord, 10, 22) \
++    X(Position,  5, 23) /* dishonored-nx (2026-10-29): Dishonored's morph / instancing vertex shader */ \
++    X(Position,  6, 24) \
++    X(Position,  7, 25)
+ 
+ // SPEC_CONSTANTS_ONLY keeps the HLSL below out of host C++ TUs, which IntelliSense would otherwise parse.
+ #if (!defined(__cplusplus) || defined(__INTELLISENSE__)) && !defined(SHADER_COMMON_SPEC_CONSTANTS_ONLY)
+--- a/app/thirdparty/reblue-XenosRecomp/XenosRecomp/shader_recompiler.cpp
++++ b/app/thirdparty/reblue-XenosRecomp/XenosRecomp/shader_recompiler.cpp
+@@ -1130,8 +1130,18 @@
+ 
+             default:
+             {
++                // dishonored-nx (2026-10-29): a vertex shader may export to an interpolator register its table does
++                // not list (Dishonored's vs_d89d5e1d550db316 has no table at all and writes o0): the assert, and a
++                // crash in release builds, before. The register's TEXCOORD (what a pixel shader without a table of
++                // its own reads it as); past 15, a scratch output.
+                 auto findResult = interpolators.find(instr.vectorDest);
+-                assert(findResult != interpolators.end());
++                if (findResult == interpolators.end())
++                {
++                    fmt::println(stderr, "vertex export to interpolator register {} the shader does not list",
++                        uint32_t(instr.vectorDest));
++                    findResult = interpolators.emplace(uint32_t(instr.vectorDest), instr.vectorDest < 16
++                        ? fmt::format("oTexCoord{}", uint32_t(instr.vectorDest)) : std::string("oUnused")).first;
++                }
+                 exportRegister = findResult->second;
+                 break;
+             }
+@@ -2498,6 +2508,7 @@
+     {
+         // Export targets with no host output: point size and memexport address/data.
+         out += "\tfloat4 oPts = 0.0;\n";
++        out += "\tfloat4 oUnused = 0.0;\n";  // dishonored-nx: exports to an unlisted interpolator
+         out += "\tfloat4 eA = 0.0;\n";
+         out += "\tfloat4 eM0 = 0.0;\n";
+         out += "\tfloat4 eM1 = 0.0;\n";

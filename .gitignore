@@ -1,0 +1,50 @@
+# dishonored-nx: what never goes into the repository.
+
+# Build output, logs, profiles
+/out/
+/build/
+logs/
+*.log
+/pgo/
+/pgo_*/
+*.gcda
+*.stream
+__pycache__/
+*.pyc
+
+# Game data and anything made from it (bring your own copy of the game)
+/assets/
+/generated/
+game_root/
+/renut_shaders/
+/renut_shaders.zip
+/switch_shaders/
+# Localized copies of recompiled game code (made from default.xex)
+/src/cpu/hot/
+/src/cpu/dishonored_hot_*.cpp
+*.xex
+*.nro
+*.nsp
+*.nxpack
+*.nxidx
+
+# Test and development leftovers (the console's address and FTP login, working notes)
+tools/switch_test.ini
+tools/switch_test.py
+tools/switch_agent.py
+tools/agent_steps.py
+tools/codegen_options.py
+tools/deko3d_window_clamp.py
+tools/install_shaders.cmd
+/notes/
+/BUDOWANIE.md
+
+# The SDK's third-party sources and DXC binaries (tools/fetch_thirdparty.py, README)
+/tools/rexglue-sdk-dishonored/sdk/out/
+/tools/rexglue-sdk-dishonored/app/thirdparty/reblue-XenosRecomp/thirdparty/dxc-bin/bin/
+/tools/rexglue-sdk-dishonored/app/thirdparty/reblue-XenosRecomp/thirdparty/dxc-bin/lib/
+
+# Editors
+.vs/
+.vscode/
+*.user
