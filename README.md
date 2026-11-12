@@ -7,7 +7,7 @@
 A Nintendo Switch port of **Dishonored** (Xbox 360, 2012) by static recompilation with
 [ReXGlue](https://github.com/rexglue), drawn through Renut's Direct3D-level renderer on deko3d.
 
-**No game files are included.** You need your own legally obtained copy of Dishonored (Xbox 360). This repository
+**No game files are included.** You need your own legally obtained copy of Dishonored **EU** (Xbox 360). This repository
 holds only the port's source code; the recompiled code (`generated/`) and the shader packages (`switch_shaders/`) are
 made from your copy of the game on your machine.
 
