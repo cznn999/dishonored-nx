@@ -11,7 +11,7 @@ A Nintendo Switch port of **Dishonored** (Xbox 360, 2012) by static recompilatio
 holds only the port's source code; the recompiled code (`generated/`) and the shader packages (`switch_shaders/`) are
 made from your copy of the game on your machine.
 
-## Status (0.10)
+## Status (0.20)
 
 - Playable: 480p internal resolution, FSR-style upscale to the screen, the handheld 460.8 MHz GPU profile requested
   automatically (the official one; the memory clock is left alone).
