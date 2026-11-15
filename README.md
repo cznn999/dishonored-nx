@@ -11,13 +11,12 @@ A Nintendo Switch port of **Dishonored** (Xbox 360, 2012) by static recompilatio
 holds only the port's source code; the recompiled code (`generated/`) and the shader packages (`switch_shaders/`) are
 made from your copy of the game on your machine.
 
-## Status (0.20)
+## Status (0.50)
 
 - Playable: 480p internal resolution, FSR-style upscale to the screen, the handheld 460.8 MHz GPU profile requested
   automatically (the official one; the memory clock is left alone).
-- For 30 fps gameplay, **Overclock is highly recommended** (measured on CPU@1785 MHz, RAM@1700 MHz). At stock clocks (1020 MHz) the game runs at 20 fps and
-  the sound can crackle in busy fights: the game's CPU work is the limit.
-- Using 4 CPU cores is **recommended** (launched through a Sphaira forwarder, see below).
+- For stable 30 fps gameplay, **Overclock is highly recommended** (measured on CPU@1428 MHz, RAM@1600 MHz). At stock clocks (1020 MHz) the game runs at 24-ish fps. Performance work is ongoing.
+- Using 4 CPU cores is **required** (launched through a Sphaira forwarder, see below).
 
 ## Installing (players)
 
