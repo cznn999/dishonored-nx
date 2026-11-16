@@ -69,6 +69,28 @@ effect at the next start.
 and tilt the console (handheld), the Pro Controller or the right Joy-Con to move the camera on top of the right stick:
 the stick for big turns, the gyro for fine aiming.
 
+## Change language
+
+The EU version has several languages built in; the game uses the console language the port reports. To change it,
+add this line to `dishonored.toml` (next to `dishonored.nro`) and restart the game:
+
+```toml
+user_language = 4
+```
+
+| Value | Language |
+|---|---|
+| `1` | English (default) |
+| `3` | German |
+| `4` | French |
+| `5` | Spanish |
+| `6` | Italian |
+| `9` | Portuguese |
+| `11` | Polish |
+| `12` | Russian |
+
+Only languages present in your copy of the game work; any other value falls back to English.
+
 ## Reporting bugs and crashes
 
 Send the newest `logs/dishonored_XXX.log` (next to `dishonored.nro`) and, after a crash, the file with the same time
