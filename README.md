@@ -75,7 +75,7 @@ The EU version has several languages built in; the game uses the console languag
 add this line to `dishonored.toml` (next to `dishonored.nro`) and restart the game:
 
 ```toml
-user_language = 4
+user_language = 1
 ```
 
 | Value | Language |
